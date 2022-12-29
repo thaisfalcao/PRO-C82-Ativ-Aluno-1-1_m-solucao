@@ -87,10 +87,10 @@ export default class TransactionScreen extends Component {
           this.initiateBookReturn(bookId,studentId,bookName, studentName);
           
           //inserir alerta de devolução do livro
-          Alert.alert("Livro retornado à biblioteca!");          
+          Alert.alert("Livro retornado à biblioteca!");
+        }          
         }
 
-        }
   };
 
   getBookDetails = bookId => {
@@ -174,13 +174,14 @@ export default class TransactionScreen extends Component {
     const transactionRef = await db
       .collection("transactions")
       .where("book_id", "==", bookId)
+      .orderBy("date", "desc")
       .limit(1)
       .get();
 
     var isStudentEligible = "";
     transactionRef.docs.map(doc => {
       var lastBookTransaction = doc.data();
-      if (lastBookTransaction.student_id === studentId) {
+      if(lastBookTransaction.student_id === studentId){
         isStudentEligible = true;
       } else {
         isStudentEligible = false;
@@ -188,11 +189,12 @@ export default class TransactionScreen extends Component {
         this.setState({
           bookId: "",
           studentId: ""
-        });
+        })
       }
-    });
+    })
+
     return isStudentEligible;
-  };
+  }
 
  initiateBookIssue = async (bookId, studentId, bookName, studentName) => {
     //adicionar uma transação
